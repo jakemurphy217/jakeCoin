@@ -9,10 +9,19 @@ class Block {
         this.data = data;
         this.previousHash = previousHash;
         this.hash = this.calculateHash();
+        this.nonce = 0;
     }
 
     calculateHash() {
-        return SHA256(this.index + this.previousHash + this.timestamp + JSON.stringify(this.data)).toString();
+        return SHA256(this.index + this.previousHash + this.timestamp + JSON.stringify(this.data) + this.nonce).toString();
+    }
+
+    mineBlock(difficulty){
+        while(this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")){
+            this.nonce++;
+            this.hash = this.calculateHash();
+        }
+        console.log("block mined: " + this.hash);
     }
 }
 
@@ -20,6 +29,8 @@ class Block {
 class Blockchain {
     constructor(){
         this.chain = [this.createGenesisBlock()];
+        // the amount of 0's infront of the hash - mining 
+        this.difficulty = 5;
     }
 
     //first block in the blockchain - never changes index 0
@@ -35,9 +46,10 @@ class Blockchain {
     // generates new block for the chain
     addBlock(newBlock){
         newBlock.previousHash = this.getLatestBlock().hash;
-        newBlock.hash = newBlock.calculateHash();
+        newBlock.mineBlock(this.difficulty);
         this.chain.push(newBlock);
     }
+
 // checks if chain is valid
     isChainValid(){
         for(let i = 1; i < this.chain.length; i++){
@@ -61,20 +73,22 @@ class Blockchain {
 //initating the jakeCoing Blockchain
 let jakeCoin = new Blockchain();
 
-// adding blocks to the chain
+console.log('Mining block 1........');
 jakeCoin.addBlock(new Block(1, "01/02/2021", {amount: 4 } ));
+
+console.log('Mining block 1........');
 jakeCoin.addBlock(new Block(2, "09/02/2021", {amount: 100 } ));
 
-//printing the jakecoin blocks in the terminal
-console.log(JSON.stringify(jakeCoin, null, 4));
+// //printing the jakecoin blocks in the terminal
+// console.log(JSON.stringify(jakeCoin, null, 4));
 
-//checks if chain is valid
-console.log("Is the blockchain valid? " + jakeCoin.isChainValid());
+// //checks if chain is valid
+// console.log("Is the blockchain valid? " + jakeCoin.isChainValid());
 
-//changing the values on block to see if changes are detected 
-jakeCoin.chain[1].data = {amount: 100000000};
-jakeCoin.chain[1].hash = jakeCoin.chain[1].calculateHash();
+// //changing the values on block to see if changes are detected 
+// jakeCoin.chain[1].data = {amount: 100000000};
+// jakeCoin.chain[1].hash = jakeCoin.chain[1].calculateHash();
 
-//checking if blockchain is valid again
-console.log("Is the blockchain valid after change? " + jakeCoin.isChainValid());
+// //checking if blockchain is valid again
+// console.log("Is the blockchain valid after change? " + jakeCoin.isChainValid());
 
