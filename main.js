@@ -38,7 +38,7 @@ class Blockchain {
         newBlock.hash = newBlock.calculateHash();
         this.chain.push(newBlock);
     }
-
+// checks if chain is valid
     isChainValid(){
         for(let i = 1; i < this.chain.length; i++){
             const currentBlock = this.chain[i];
@@ -52,21 +52,29 @@ class Blockchain {
                 return false;
             }
         }
+        // if nothing chain hasnt been tampered with
         return true;
     }
 
 }
 
+//initating the jakeCoing Blockchain
 let jakeCoin = new Blockchain();
 
+// adding blocks to the chain
 jakeCoin.addBlock(new Block(1, "01/02/2021", {amount: 4 } ));
-jakeCoin.addBlock(new Block(1, "09/02/2021", {amount: 100 } ));
+jakeCoin.addBlock(new Block(2, "09/02/2021", {amount: 100 } ));
 
+//printing the jakecoin blocks in the terminal
+console.log(JSON.stringify(jakeCoin, null, 4));
+
+//checks if chain is valid
 console.log("Is the blockchain valid? " + jakeCoin.isChainValid());
 
+//changing the values on block to see if changes are detected 
 jakeCoin.chain[1].data = {amount: 100000000};
 jakeCoin.chain[1].hash = jakeCoin.chain[1].calculateHash();
 
+//checking if blockchain is valid again
 console.log("Is the blockchain valid after change? " + jakeCoin.isChainValid());
 
-// console.log(JSON.stringify(jakeCoin, null, 4));
